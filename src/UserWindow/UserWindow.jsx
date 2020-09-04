@@ -1,5 +1,7 @@
 import React from 'react';
 import './UserWindow.css';
+import cn from 'classnames';
+
 /**
  * Rectángulo
  * Si está hablando sale un borde verde
@@ -9,17 +11,17 @@ import './UserWindow.css';
  * Menú (mutear, renombrar, chatear)
  */
 
-export const UserWindow = (props) => {
-
-  console.log(props)
-
-  var className = 'UserWindow';
-
-  if(props.talking) {
-    className += ' UserWindow--talking';
-  }
-
-  return <div className={className}>
-    <p className="UserWindow__name">{props.name}</p>
+/**
+ * UserWindow
+ * @param boolean talking: is the user talking or not
+ * @param string name: the user's name
+ */
+export const UserWindow = ({ talking, name, img, video }) => {
+  return <div className={cn('UserWindow', talking && 'UserWindow--talking')}>
+    <div className="UserWindow__children">
+      {img && <img src={img} alt="" />}
+      {video && <video src={video} autoPlay />}
+    </div>
+    <p className={cn('UserWindow__name', !img && !video && 'UserWindow__name--center')}>{name}</p>
   </div>;
 }
