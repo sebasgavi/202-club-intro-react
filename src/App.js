@@ -1,49 +1,53 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
 import { UserWindow } from './UserWindow/UserWindow';
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 
-const initialUsers = [
-  {
-    name: 'Joan & Camila',
-    img: 'https://m.dw.com/image/50320152_101.jpg',
-    talking: true,
-    id: 0,
-  },
-  {
-    name: 'Daniel',
-    talking: true,
-    id: 1,
-  },
-  {
-    name: 'Esteban',
-    video: '/zoom_0.mp4',
-    id: 2,
-  },
-];
+var firebaseConfig = {
+  apiKey: process.env.REACT_APP_FB_API_KEY,
+  authDomain: process.env.REACT_APP_FB_AUTH_DOMAIN,
+  databaseURL: "https://club-react-intro.firebaseio.com",
+  projectId: "club-react-intro",
+  storageBucket: "club-react-intro.appspot.com",
+  messagingSenderId: "204005349416",
+  appId: "1:204005349416:web:c244752f0d195c33c37d1d"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
 
 function App() {
 
-  const [ users, setUsers ] = useState(initialUsers);
+  const [ users, setUsers ] = React.useState([]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setUsers([
-      ...users,
-      {
-        name: event.target.nickname.value,
-        img: event.target.img.value,
-        id: Math.floor(Math.random() * 6165165156),
-      }
-    ]);
+    db.collection('users').add({
+      name: event.target.nickname.value,
+      img: event.target.img.value,
+    });
     event.target.reset();
   }
 
   const handleDelete = (id) => {
-    const newUsers = users.filter((user) => {
-      return user.id !== id;
-    });
-    setUsers(newUsers);
+    db.collection('users').doc(id).delete();
   }
+
+  React.useEffect(() => {
+    db.collection('users')
+      .onSnapshot(function(querySnapshot) {
+        var currentUsers = [];
+        querySnapshot.forEach(function(doc) {
+          currentUsers.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+        setUsers(currentUsers);
+      });
+  }, []);
 
   return (
     <div className="App">
