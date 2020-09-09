@@ -25,29 +25,41 @@ function App() {
 
   const [ users, setUsers ] = useState(initialUsers);
 
-  const handleClick = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     setUsers([
       ...users,
       {
-        name: 'uno',
-        id: Math.random() * 6165165156,
+        name: event.target.nickname.value,
+        img: event.target.img.value,
+        id: Math.floor(Math.random() * 6165165156),
       }
     ]);
-    console.log(users);
+    event.target.reset();
+  }
+
+  const handleDelete = (id) => {
+    const newUsers = users.filter((user) => {
+      return user.id !== id;
+    });
+    setUsers(newUsers);
   }
 
   return (
     <div className="App">
-      
-      <input />
-      <button onClick={handleClick}>
-        agregar
-      </button>
+      <form onSubmit={handleSubmit}>
+        <input name="nickname" placeholder="Nombre" />
+        <input name="img" placeholder="URL de imagen" />
+        <button type="submit">
+          agregar
+        </button>
+      </form>
 
       {users.map((obj) => <UserWindow
         {...obj}
+        onDelete={handleDelete}
         key={obj.id} />)}
-      
+
     </div>
   );
 }

@@ -16,12 +16,20 @@ import cn from 'classnames';
  * @param boolean talking: is the user talking or not
  * @param string name: the user's name
  */
-export const UserWindow = ({ talking, name, img, video }) => {
+export const UserWindow = ({ talking, id, name, img, video, onDelete }) => {
+
+  const handleDelete = (event) => {
+    onDelete(id);
+  }
+
   return <div className={cn('UserWindow', talking && 'UserWindow--talking')}>
     <div className="UserWindow__children">
       {img && <img src={img} alt="" />}
       {video && <video src={video} autoPlay />}
     </div>
     <p className={cn('UserWindow__name', !img && !video && 'UserWindow__name--center')}>{name}</p>
+    <button className="UserWindow__delete" onClick={handleDelete}>
+      borrar
+    </button>
   </div>;
 }
